@@ -100,6 +100,9 @@
             <button type="button" onclick="askGeminiDeepDive()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
               <span>✨ Geminiでこの薬を詳しく深掘り・質問する</span>
             </button>
+            <button type="button" onclick="searchDrugDetails()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 transition">
+              <span>🔍 Googleでこの薬を詳しく調べる（作用機序・副作用）</span>
+            </button>
             <button id="next-btn" onclick="nextQuestion()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition">
               次の問題へ
             </button>
@@ -3241,6 +3244,18 @@
 
       // Gemini Webをプロンプト付きで別タブオープン
       const targetUrl = `https://gemini.google.com/app?q=${encodeURIComponent(prompt)}`;
+      window.open(targetUrl, '_blank');
+    }
+
+    
+    function searchDrugDetails() {
+      const q = currentQuestions[currentQuestionIndex];
+      // 問題文や解説からカタカナ薬剤名を抽出（見つからない場合は正解肢を使用）
+      const katakanaMatches = (q.question + " " + q.explanation).match(/[ァ-ヴー]{4,}/g);
+      const drugName = katakanaMatches ? katakanaMatches[0] : q.options[q.answerIndex];
+      
+      const query = `${drugName} 作用機序 副作用 薬理学`;
+      const targetUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
       window.open(targetUrl, '_blank');
     }
 
