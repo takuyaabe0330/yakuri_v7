@@ -97,6 +97,9 @@
             <button id="exclude-btn" onclick="toggleExcludeCurrentQuestion()" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 transition">
               <span>🚫 この問題を習得済みにする（リセットまで次回以降出さない）</span>
             </button>
+            <button type="button" onclick="askGeminiDeepDive()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+              <span>✨ Geminiでこの薬を詳しく深掘り・質問する</span>
+            </button>
             <button id="next-btn" onclick="nextQuestion()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition">
               次の問題へ
             </button>
@@ -3224,6 +3227,22 @@
     let currentQuestionIndex = 0;
     let score = 0;
     let isAnswered = false;
+
+    
+    function askGeminiDeepDive() {
+      const q = currentQuestions[currentQuestionIndex];
+      const correctOpt = q.options[q.answerIndex];
+      const prompt = `薬理学の学習中です。以下の問題と解説に関連して、対象薬剤の【作用機序の詳細】【臨床適応】【重大な副作用】【類似薬との鑑別点や国家試験頻出ポイント】を分かりやすく整理して解説してください。\n\n【問題】\n${q.question}\n\n【正解】\n${correctOpt}\n\n【解説】\n${q.explanation}`;
+
+      // クリップボードにコピーを試みる（フォールバック用）
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(prompt).catch(() => {});
+      }
+
+      // Gemini Webをプロンプト付きで別タブオープン
+      const targetUrl = `https://gemini.google.com/app?q=${encodeURIComponent(prompt)}`;
+      window.open(targetUrl, '_blank');
+    }
 
     function shuffleArray(array) {
       const arr = [...array];
